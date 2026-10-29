@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anleitung für Lehrkräfte – RCC Lerntrainer</title>
+<style>
+@font-face{font-family:"Barlow Semi Condensed";src:url(fonts/BarlowSemiCondensed-SemiBold.woff2) format("woff2");font-weight:600}
+@font-face{font-family:"Barlow Semi Condensed";src:url(fonts/BarlowSemiCondensed-Bold.woff2) format("woff2");font-weight:700}
+@font-face{font-family:"Nunito";src:url(fonts/Nunito-VariableFont_wght.woff2) format("woff2");font-weight:200 1000}
+:root{--navy:#004D7A;--karamell:#D9822B;--anthrazit:#2B3640;--grau:#5F6B75;--hell:#F1F3F5;--linie:#E1E5E9;--head:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;--body:"Nunito",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:#E9ECEF;color:var(--anthrazit);font-family:var(--body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.leiste{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px 16px;background:#fff;border-bottom:1px solid var(--linie);font-size:14px;color:var(--grau)}
+.leiste button{font:600 16px var(--head);background:var(--navy);color:#fff;border:0;border-radius:6px;padding:10px 18px;cursor:pointer}
+.leiste a{color:var(--navy)}
+.seite{width:210mm;height:297mm;margin:16px auto;background:#fff;padding:13mm 17mm 10mm;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.12);overflow:hidden}
+.kopf{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--linie);padding-bottom:4mm}
+.kopf img{height:13mm}
+.kopf .titel{text-align:right}
+.kopf .titel b{display:block;font:700 20pt/1.05 var(--head);color:var(--navy)}
+.kopf .titel span{font-size:10pt;color:var(--grau)}
+.eyebrow{font:700 9.5pt var(--head);letter-spacing:.12em;text-transform:uppercase;color:var(--karamell);margin:5mm 0 1mm}
+h1{font:700 23pt/1.1 var(--head);color:var(--navy);margin:0 0 2mm}
+.lead{font-size:10.5pt;line-height:1.45;margin:0 0 4mm}
+.box{background:var(--hell);border-radius:4mm;padding:4mm 5mm;font-size:10pt;line-height:1.45;margin-bottom:4mm}
+.box b{color:var(--navy)}
+.schritte{list-style:none;margin:0;padding:0;display:grid;gap:3.2mm}
+.schritte li{display:grid;grid-template-columns:11mm 1fr;gap:4.5mm;align-items:start}
+.hex{width:11mm;height:9.5mm;background:var(--navy);color:#fff;display:grid;place-items:center;font:700 13.5pt var(--head);clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.hex.k{background:var(--karamell)}
+.schritte h2{font:700 13pt/1.2 var(--head);color:var(--navy);margin:0 0 .5mm}
+.schritte p{margin:0;font-size:10pt;line-height:1.45}
+.schritte ul{margin:1mm 0 0;padding-left:4.5mm;font-size:10pt;line-height:1.45}
+.schritte li li{display:list-item}
+.pfad{font-weight:700;color:var(--navy)}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:4mm}
+.zwei .box{margin:0}
+.zwei h3{font:700 11.5pt var(--head);color:var(--navy);margin:0 0 1mm}
+.zwei ul{margin:0;padding-left:4.5mm}
+.fuss{margin-top:auto;padding-top:3mm;border-top:1px solid var(--linie);display:flex;justify-content:space-between;font-size:8.5pt;color:var(--grau)}
+.fuss b{color:var(--navy)}
+@page{size:A4;margin:0}
+@media print{html,body{background:#fff}.leiste{display:none}.seite{margin:0;box-shadow:none;height:296mm;break-after:page}.seite:last-child{break-after:auto}}
+</style>
+</head>
+<body>
+<div class="leiste"><button onclick="window.print()">Drucken oder als PDF speichern</button><span>2 Seiten A4 · <a href="./">zurück zur App</a></span></div>
+
+<div class="seite">
+  <div class="kopf"><img src="assets/logo-rcc.svg" alt="RCC Consulting GmbH"><div class="titel"><b>Lerntrainer</b><span>Anleitung für Lehrkräfte</span></div></div>
+  <p class="eyebrow">Für Lehrkräfte</p>
+  <h1>So arbeiten Sie mit dem Lerntrainer</h1>
+  <p class="lead">Der Lerntrainer enthält über 500 programmierte Prüfungsfragen (Multiple Choice, A–E) zur Süßwarentechnologie: Rohstoffe, Schokolade, Konfekt, Zuckerwaren, Dauerbackwaren, Recht und Allgemeines. Schüler lernen selbstständig am Handy oder PC, Sie legen Klassen an, stellen kurze Tests zusammen und sehen die Ergebnisse.</p>
+  <div class="box"><b>Adresse:</b> <span class="adresse"></span> &nbsp;·&nbsp; <b>Ihr Zugang:</b> E-Mail und Passwort erhalten Sie von RCC Consulting. Läuft im Browser, keine Installation nötig.</div>
+  <ol class="schritte">
+    <li><span class="hex">1</span><div><h2>Anmelden</h2><p>Adresse öffnen, oben den Reiter <span class="pfad">Lehrkraft</span> wählen, E-Mail und Passwort eingeben. Oben erscheinen zusätzlich die Bereiche <span class="pfad">Klassen</span> und <span class="pfad">Tests erstellen</span>.</p></div></li>
+    <li><span class="hex">2</span><div><h2>Klasse anlegen</h2><p><span class="pfad">Klassen → Neue Klasse</span>: Namen eingeben (z. B. „Fachschule 2026/27“) und <span class="pfad">Anlegen</span>. Der Klassencode wird automatisch vergeben. Empfehlung: eine Klasse je Jahrgang oder Kurs – Fortschritt und Tests laufen getrennt.</p></div></li>
+    <li><span class="hex">3</span><div><h2>Schüler einladen</h2><p>Bei der Klasse zwei Wege:</p><ul><li><span class="pfad">Anleitungsblatt drucken</span> – A4-Blatt mit QR-Code und Klassencode zum Austeilen. QR scannen genügt, der Code ist dann schon eingetragen.</li><li><span class="pfad">Link kopieren</span> – Einladungslink per E-Mail, Teams oder Lernplattform verschicken.</li></ul></div></li>
+    <li><span class="hex">4</span><div><h2>Schüler registrieren sich selbst</h2><p>Jeder wählt einen Namen und eine 4-stellige PIN und tippt auf <span class="pfad">Neu registrieren</span>. Bitten Sie um <b>Vor- und Nachnamen</b> – sonst sehen Sie in Auswertungen nur Fantasienamen. E-Mail-Adressen werden nicht abgefragt. Später reichen Name und PIN.</p></div></li>
+    <li><span class="hex">5</span><div><h2>Was die Schüler machen</h2><ul>
+      <li><span class="pfad">Lernen</span> – Lernkartei: Fragen in Runden (5–30), sofortige Rückmeldung mit Lösung. Falsch beantwortete Fragen kommen öfter dran; nach drei richtigen Antworten in Folge gilt eine Frage als „sicher“.</li>
+      <li><span class="pfad">Prüfung</span> – Simulation mit 10, 25 oder 50 Fragen, wahlweise mit Zeitlimit, Ergebnis erst am Ende, bestanden ab 50 %.</li>
+      <li><span class="pfad">Tests</span> – die von Ihnen freigeschalteten Tests; auf der Startseite erscheint ein Hinweis.</li>
+      <li><span class="pfad">Fortschritt</span> – eigener Stand je Thema. Links lassen sich Bereiche und Themen eingrenzen.</li></ul></div></li>
+  </ol>
+  <div class="fuss"><span>Bereitgestellt von <b>RCC Consulting GmbH</b> · technische Beratung für die Süßwarenindustrie</span><span>Seite 1 von 2</span></div>
+</div>
+
+<div class="seite">
+  <div class="kopf"><img src="assets/logo-rcc.svg" alt="RCC Consulting GmbH"><div class="titel"><b>Lerntrainer</b><span>Anleitung für Lehrkräfte</span></div></div>
+  <p class="eyebrow">Tests und Auswertung</p>
+  <ol class="schritte" start="6" style="margin-top:2mm">
+    <li><span class="hex">6</span><div><h2>Kurztest erstellen (z. B. 10 Minuten zu Stundenbeginn)</h2><ul>
+      <li><span class="pfad">Tests erstellen</span> öffnen und links die Themen wählen, die abgefragt werden sollen (keine Auswahl = alle Themen).</li>
+      <li>Klasse, Titel, Anzahl Fragen (5–25) und Zeit (5–30 min oder ohne Limit) einstellen.</li>
+      <li><span class="pfad">Test anlegen und freischalten</span> – die Fragen werden zufällig gezogen, nur mit geprüfter Lösung. Alle Schüler der Klasse erhalten dieselben Fragen.</li>
+      <li>Jeder Schüler kann einen Test <b>einmal</b> abgeben. Bei Zeitlimit wird automatisch abgegeben.</li>
+      <li>Nach dem Test unter <span class="pfad">Bisherige Tests</span> den Status auf <b>gesperrt</b> setzen – dann verschwindet er bei den Schülern.</li></ul></div></li>
+    <li><span class="hex">7</span><div><h2>Auswertung</h2><p>Unter <span class="pfad">Bisherige Tests → Auswertung</span>:</p><ul>
+      <li>Anzahl Abgaben und Durchschnitt der Klasse.</li>
+      <li><b>Fragen nach Fehlerquote</b> – die schwierigsten Fragen stehen oben, mit richtiger Lösung. Ideal für die Besprechung im Unterricht.</li>
+      <li>Ergebnis je Schüler mit Abgabezeit.</li></ul></div></li>
+    <li><span class="hex">8</span><div><h2>Lernfortschritt der Klasse</h2><p><span class="pfad">Klassen → Fortschritt der Schüler</span>: je Schüler die Zahl bearbeiteter Fragen, „sicher“ beherrschter Fragen und die Trefferquote. So sehen Sie, wer regelmäßig übt.</p></div></li>
+    <li><span class="hex">9</span><div><h2>PIN vergessen</h2><p>In der Fortschrittsliste beim Schüler <span class="pfad">zurücksetzen</span> und zur Bestätigung ein zweites Mal klicken. Die neue PIN erscheint direkt – dem Schüler mitteilen. Der Lernstand bleibt erhalten.</p></div></li>
+  </ol>
+  <div class="zwei">
+    <div class="box"><h3>Tipps für den Unterricht</h3><ul>
+      <li>Kurztest mit 10 Fragen zu Stundenbeginn – Thema der letzten Stunde.</li>
+      <li>Die drei Fragen mit der höchsten Fehlerquote gemeinsam besprechen.</li>
+      <li>Vor der Prüfung: Prüfungssimulation mit 50 Fragen als Hausaufgabe.</li>
+      <li>Selbst testen: Als Lehrkraft können Sie alles ausprobieren, was Schüler sehen.</li></ul></div>
+    <div class="box"><h3>Gut zu wissen</h3><ul>
+      <li>Sie sehen nur Ihre eigenen Klassen.</li>
+      <li>Fehler in einer Frage entdeckt? Fragetext oder Bildschirmfoto an <b>info@rcc-online.com</b> – wir korrigieren laufend.</li>
+      <li>Klasse fertig? Kurze Mail an RCC, dann löschen wir Konten und Lernstände.</li>
+      <li>Datenschutzhinweise: in der App unten verlinkt.</li></ul></div>
+  </div>
+  <div class="box" style="margin-top:4mm"><b>Kontakt:</b> RCC Consulting GmbH · Glockengasse 5 · 47608 Geldern · info@rcc-online.com · www.rcc-online.com</div>
+  <div class="fuss"><span>Bereitgestellt von <b>RCC Consulting GmbH</b> · technische Beratung für die Süßwarenindustrie</span><span>Seite 2 von 2</span></div>
+</div>
+<script>document.querySelectorAll('.adresse').forEach(e => e.textContent = new URL('./', location.href).href.replace(/^https?:\/\//, '').replace(/\/$/, ''));</script>
+</body>
+</html>
