@@ -49,18 +49,18 @@
   <div class="kopf"><img src="assets/logo-rcc.svg" alt="RCC Consulting GmbH"><div class="titel"><b>Lerntrainer</b><span>Süßwarentechnologie</span></div></div>
   <p class="eyebrow">${name ? esc(name) : 'Deine Klasse'}</p>
   <h1>So startest du mit dem Lerntrainer</h1>
-  <p class="lead">Über 500 Prüfungsfragen zur Süßwarentechnologie – am Handy, Tablet oder PC. Kostenlos, ohne E-Mail-Adresse und ohne Klarnamen.</p>
+  <p class="lead">Über 500 Prüfungsfragen zur Süßwarentechnologie – am Handy, Tablet oder PC. Kostenlos und ohne E-Mail-Adresse.</p>
   <div class="zugang">${svg}<div>
     <p class="lbl">Klassencode</p><p class="code">${esc(code)}</p>
     <p class="lbl">Adresse</p><p class="url">${esc(anzeige)}</p>
     <p class="klein">Mit dem QR-Code ist der Klassencode schon eingetragen. Am PC: Adresse eingeben, dann den Klassencode.</p></div></div>
   <ol class="schritte">
     <li><span class="hex">1</span><div><b>QR-Code scannen</b><p>Mit der Handykamera scannen und den Link öffnen. Am PC die Adresse oben eingeben und den Klassencode eintippen.</p></div></li>
-    <li><span class="hex">2</span><div><b>Einmalig registrieren</b><p>Spitznamen ausdenken (kein echter Name nötig) und eine 4-stellige PIN wählen. Dann auf <b style="display:inline;font-size:inherit">„Neu registrieren“</b> tippen.</p></div></li>
-    <li><span class="hex">3</span><div><b>Später: einfach anmelden</b><p>Spitzname und PIN eingeben, „Anmelden“ – fertig. Tipp: Im Browser-Menü „Zum Startbildschirm hinzufügen“, dann liegt der Lerntrainer wie eine App auf dem Handy.</p></div></li>
+    <li><span class="hex">2</span><div><b>Einmalig registrieren</b><p>Vor- und Nachnamen eingeben und eine 4-stellige PIN wählen. Dann auf <b style="display:inline;font-size:inherit">„Neu registrieren“</b> tippen.</p></div></li>
+    <li><span class="hex">3</span><div><b>Später: einfach anmelden</b><p>Name und PIN eingeben, „Anmelden“ – fertig. Tipp: Im Browser-Menü „Zum Startbildschirm hinzufügen“, dann liegt der Lerntrainer wie eine App auf dem Handy.</p></div></li>
     <li><span class="hex">4</span><div><b>Lernen</b><p>Bereich antippen und loslegen. Die Lernkartei holt Fragen, die noch nicht sitzen, öfter nach vorn. Unter „Prüfung“ simulierst du eine echte Prüfung, unter „Tests“ findest du die Tests deiner Lehrkraft.</p></div></li>
   </ol>
-  <div class="notiz"><p class="k">Mein Zugang</p><div class="feld">Spitzname</div><div class="feld">PIN</div><p class="hinweis">Blatt gut aufbewahren – Spitzname und PIN sind dein einziger Zugang.</p></div>
+  <div class="notiz"><p class="k">Mein Zugang</p><div class="feld">PIN</div><div></div><p class="hinweis">Blatt gut aufbewahren. PIN vergessen? Deine Lehrkraft kann sie zurücksetzen.</p></div>
   <div class="fuss"><span>Bereitgestellt von <b>RCC Consulting GmbH</b> · technische Beratung für die Süßwarenindustrie</span><span>www.rcc-online.com</span></div>
 </div>`;
   document.title = 'Anleitungsblatt ' + code + ' – RCC Lerntrainer';

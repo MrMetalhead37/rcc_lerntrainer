@@ -226,3 +226,4 @@ header{background:#FFFFFF;color:#2B3640;border-bottom:1px solid #E1E5E9}
 .klassefix span{font-size:13px;color:#5F6B75}.klassefix b{color:#004D7A;flex:1}
 .linkbtn{background:none;border:0;color:#004D7A;text-decoration:underline;cursor:pointer;font:inherit;font-size:14px;padding:0}
 .einladung{display:flex;gap:8px}.einladung input{flex:1;min-width:0;font-size:13px;padding:6px 8px;border:1px solid #E1E5E9;border-radius:6px;color:#2B3640;background:#fff}
+.neupin{font-family:var(--head);font-size:17px;color:var(--navy)}.neupin b{letter-spacing:2px}

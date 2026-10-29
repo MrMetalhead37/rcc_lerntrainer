@@ -1,3 +1,4 @@
+-- Hinweis: Nach dieser Datei auch 02_pin_zuruecksetzen.sql ausführen.
 -- RCC Lerntrainer – Datenbankschema (Supabase / PostgreSQL)
 -- Einmalig im Supabase SQL-Editor ausführen (gesamten Inhalt einfügen, "Run").
 -- Kann gefahrlos erneut ausgeführt werden (idempotent).

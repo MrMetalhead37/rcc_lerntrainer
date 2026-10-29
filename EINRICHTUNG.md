@@ -21,3 +21,6 @@ Supabase › Authentication › Add user (E-Mail, Startpasswort, Auto Confirm) �
 
 ## 5 Eigene Adresse (Strato)
 Netlify › Domain management › Add domain `lernen.rcc-online.com` › CNAME-Ziel von Netlify bei Strato für die Subdomain eintragen.
+
+## Änderung 02 (29.10.2026)
+Im Supabase SQL Editor den kompletten Inhalt von `supabase/02_pin_zuruecksetzen.sql` ausführen (PIN zurücksetzen durch die Lehrkraft).

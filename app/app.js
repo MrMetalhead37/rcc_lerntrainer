@@ -74,10 +74,10 @@ function loginView(tab = store.get('logintab', 'schueler')) {
     ${tab === 'schueler' ? `
       ${store.get('lastcode', '') ? `<div class="klassefix" id="klassefix"><span>Klasse</span><b id="kname">${esc(store.get('lastcode', ''))}</b><button type="button" class="linkbtn" id="kaendern">ändern</button></div>` : ''}
       <label class="feld" id="codefeld"${store.get('lastcode', '') ? ' hidden' : ''}>Klassencode<input id="code" autocomplete="off" autocapitalize="characters" placeholder="z. B. ZDS-7KQ2M" value="${esc(store.get('lastcode', ''))}"></label>
-      <label class="feld">Spitzname<input id="nick" autocomplete="username" maxlength="20" placeholder="kein Klarname nötig" value="${esc(store.get('lastnick', ''))}"></label>
+      <label class="feld">Vor- und Nachname<input id="nick" autocomplete="name" autocapitalize="words" maxlength="40" placeholder="z. B. Max Mustermann" value="${esc(store.get('lastnick', ''))}"></label>
       <label class="feld">PIN (4 Ziffern)<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password"></label>
       <div class="actions" style="margin:0"><button class="btn" id="anmelden">Anmelden</button><button class="btn sek" id="neu">Neu registrieren</button></div>
-      <p class="hint">Spitzname und PIN gut merken – sie sind dein Zugang. Wir speichern keine E-Mail-Adresse und keinen Klarnamen.</p>`
+      <p class="hint">Name und PIN sind dein Zugang – PIN gut merken. Deine Lehrkraft sieht deinen Namen und deinen Lernfortschritt. PIN vergessen? Die Lehrkraft kann sie zurücksetzen.</p>`
       : `
       <label class="feld">E-Mail<input id="mail" type="email" autocomplete="username"></label>
       <label class="feld">Passwort<input id="pw" type="password" autocomplete="current-password"></label>
@@ -85,16 +85,17 @@ function loginView(tab = store.get('logintab', 'schueler')) {
       <p class="hint">Zugänge für Lehrkräfte vergibt RCC Consulting.</p>`}
     <p class="fehlermeldung" id="err" role="alert"></p></div></div>`;
   $$('.tabs button').forEach(b => b.onclick = () => { store.set('logintab', b.dataset.t); loginView(b.dataset.t); });
-  const err = m => $('#err').textContent = m;
+  const err = m => { $('#err').textContent = m; };
   if (tab === 'schueler') {
     if ($('#kaendern')) {
       $('#kaendern').onclick = () => { $('#klassefix').remove(); $('#codefeld').hidden = false; $('#code').focus(); $('#code').select(); };
       sb.rpc('klasse_pruefen', { p_code: normCode(store.get('lastcode', '')) }).then(({ data }) => { if (data && $('#kname')) $('#kname').textContent = data; });
     }
-    const werte = () => {
-      const code = $('#code').value, nick = $('#nick').value.trim(), pin = $('#pin').value.trim();
+    const werte = (neu = false) => {
+      const code = $('#code').value, nick = $('#nick').value.trim().replace(/\s+/g, ' '), pin = $('#pin').value.trim();
       if (!code.trim()) return err('Bitte Klassencode eingeben.');
-      if (!/^[\p{L}0-9 _-]{3,20}$/u.test(nick)) return err('Spitzname: 3–20 Zeichen, Buchstaben, Ziffern, Leerzeichen oder Bindestrich.');
+      if (neu && !/^[\p{L}][\p{L}'.-]*( [\p{L}][\p{L}'.-]*)+$/u.test(nick)) return err('Bitte Vor- und Nachnamen eingeben, z. B. „Max Mustermann“ (nur Buchstaben).');
+      if (!/^[\p{L}0-9 '._-]{3,40}$/u.test(nick)) return err('Bitte deinen Vor- und Nachnamen eingeben.');
       if (!/^\d{4}$/.test(pin)) return err('Die PIN hat genau 4 Ziffern.');
       store.set('lastcode', normCode(code)); store.set('lastnick', nick);
       return { nick, ...schuelerZugang(code, nick, pin) };
@@ -102,15 +103,15 @@ function loginView(tab = store.get('logintab', 'schueler')) {
     $('#anmelden').onclick = async () => {
       const w = werte(); if (!w) return; err('');
       const { error } = await sb.auth.signInWithPassword({ email: w.email, password: w.password });
-      if (error) err('Anmeldung fehlgeschlagen. Stimmen Klassencode, Spitzname und PIN? Neu hier? Dann „Neu registrieren“.');
+      if (error) err('Anmeldung fehlgeschlagen. Stimmen Klassencode, Name und PIN? Neu hier? Dann „Neu registrieren“. PIN vergessen? Lehrkraft fragen.');
     };
     $('#neu').onclick = async () => {
-      const w = werte(); if (!w) return; err('');
+      const w = werte(true); if (!w) return; err('');
       const { data: kname, error: e1 } = await sb.rpc('klasse_pruefen', { p_code: w.code });
       if (e1) return err('Keine Verbindung zum Server. Bitte später erneut versuchen.');
       if (!kname) return err('Diesen Klassencode gibt es nicht. Bitte bei der Lehrkraft nachfragen.');
       const { error } = await sb.auth.signUp({ email: w.email, password: w.password, options: { data: { klassencode: w.code, spitzname: w.nick } } });
-      if (error) return err(/registered|exists/i.test(error.message) ? 'Diesen Spitznamen gibt es in der Klasse schon. Bitte einen anderen wählen oder anmelden.' : 'Registrierung fehlgeschlagen: ' + error.message);
+      if (error) return err(/registered|exists/i.test(error.message) ? 'Diesen Namen gibt es in der Klasse schon. Schon registriert? Dann „Anmelden“. Sonst bitte die Lehrkraft fragen.' : 'Registrierung fehlgeschlagen: ' + error.message);
       const { error: e2 } = await sb.auth.signInWithPassword({ email: w.email, password: w.password });
       if (e2) err('Konto angelegt, Anmeldung fehlgeschlagen: ' + e2.message);
     };
@@ -364,7 +365,13 @@ async function klassenView() {
     const box = $('#kf-' + b.dataset.k); box.innerHTML = '<p class="leer">Lädt …</p>';
     const { data, error } = await sb.rpc('klassen_fortschritt', { p_klasse: b.dataset.k });
     if (error) return box.innerHTML = `<p class="fehlermeldung">${esc(error.message)}</p>`;
-    box.innerHTML = data.length ? `<div class="tbl"><table><thead><tr><th>Spitzname</th><th>bearbeitet</th><th>sicher</th><th>Quote</th></tr></thead><tbody>${data.map(r => `<tr><td>${esc(r.spitzname)}</td><td>${r.bearbeitet}</td><td>${r.sicher}</td><td>${r.quote ?? '–'} %</td></tr>`).join('')}</tbody></table></div>` : '<p class="leer">Noch keine Schüler registriert.</p>';
+    box.innerHTML = data.length ? `<div class="tbl"><table><thead><tr><th>Name</th><th>bearbeitet</th><th>sicher</th><th>Quote</th><th>PIN</th></tr></thead><tbody>${data.map(r => `<tr><td>${esc(r.spitzname)}</td><td>${r.bearbeitet}</td><td>${r.sicher}</td><td>${r.quote ?? '–'} %</td><td>${r.id ? `<button class="btn klein sek" data-pin="${r.id}" data-name="${esc(r.spitzname)}">zurücksetzen</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="leer">Noch keine Schüler registriert.</p>';
+    $$('[data-pin]', box).forEach(pb => pb.onclick = async () => {
+      if (!pb.dataset.ok) { pb.dataset.ok = '1'; pb.textContent = 'Wirklich? Nochmal klicken'; setTimeout(() => { if (pb.dataset.ok === '1') { delete pb.dataset.ok; pb.textContent = 'zurücksetzen'; } }, 4000); return; }
+      pb.dataset.ok = '2'; pb.disabled = true; pb.textContent = '…';
+      const { data: pin, error } = await sb.rpc('pin_zuruecksetzen', { p_user: pb.dataset.pin });
+      pb.parentElement.innerHTML = error ? `<span class="fehlermeldung">Nicht möglich: ${esc(error.message)}</span>` : `<span class="neupin">Neue PIN: <b>${esc(pin)}</b></span><div class="hint" style="margin:0">Bitte ${esc(pb.dataset.name)} mitteilen.</div>`;
+    });
   });
 }
 
@@ -407,7 +414,7 @@ async function testbauView() {
     const schnitt = data.length ? Math.round(data.reduce((a, d) => a + d.richtig / d.gesamt, 0) / data.length * 100) : null;
     box.innerHTML = `<h3 style="margin-top:22px">Auswertung: ${esc(t.titel)}</h3><div class="kpis"><div class="kpi"><b>${data.length}</b><span>Abgaben</span></div><div class="kpi"><b>${schnitt ?? '–'}${schnitt != null ? ' %' : ''}</b><span>Durchschnitt</span></div></div>
     <h2>Fragen nach Fehlerquote</h2><div class="tbl"><table><thead><tr><th>Frage</th><th>Lösung</th><th>falsch</th></tr></thead><tbody>${fq.map(x => `<tr><td>${esc(clean(x.q?.frage || ''))}</td><td>${x.q?.loesung} · ${esc(x.q?.optionen[L.indexOf(x.q?.loesung)] || '')}</td><td>${x.n ? Math.round(x.f / x.n * 100) + ' %' : '–'}</td></tr>`).join('')}</tbody></table></div>
-    <h2 style="margin-top:16px">Ergebnisse</h2><div class="tbl"><table><thead><tr><th>Spitzname</th><th>richtig</th><th>Quote</th><th>abgegeben</th></tr></thead><tbody>${data.map(d => `<tr><td>${esc(d.spitzname)}</td><td>${d.richtig} / ${d.gesamt}</td><td>${Math.round(d.richtig / d.gesamt * 100)} %</td><td>${new Date(d.abgegeben_at).toLocaleString('de-DE')}</td></tr>`).join('') || '<tr><td colspan="4" class="leer">Noch keine Abgaben.</td></tr>'}</tbody></table></div>`;
+    <h2 style="margin-top:16px">Ergebnisse</h2><div class="tbl"><table><thead><tr><th>Name</th><th>richtig</th><th>Quote</th><th>abgegeben</th></tr></thead><tbody>${data.map(d => `<tr><td>${esc(d.spitzname)}</td><td>${d.richtig} / ${d.gesamt}</td><td>${Math.round(d.richtig / d.gesamt * 100)} %</td><td>${new Date(d.abgegeben_at).toLocaleString('de-DE')}</td></tr>`).join('') || '<tr><td colspan="4" class="leer">Noch keine Abgaben.</td></tr>'}</tbody></table></div>`;
     box.scrollIntoView({ behavior: 'smooth' });
   });
 }

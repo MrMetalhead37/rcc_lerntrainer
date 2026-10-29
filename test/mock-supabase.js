@@ -44,8 +44,9 @@
         from: q,
         rpc: async (fn, a) => {
           if (fn === 'klasse_pruefen') return { data: db.klassen.find(k => k.code === a.p_code.toUpperCase())?.name || null, error: null };
-          if (fn === 'klassen_fortschritt') return { data: db.profile.filter(p => p.klasse_id === a.p_klasse).map(p => ({ spitzname: p.spitzname, bearbeitet: 12, sicher: 4, quote: 71 })), error: null };
+          if (fn === 'klassen_fortschritt') return { data: db.profile.filter(p => p.klasse_id === a.p_klasse).map(p => ({ id: p.id, spitzname: p.spitzname, bearbeitet: 12, sicher: 4, quote: 71 })), error: null };
           if (fn === 'test_auswertung') return { data: db.test_ergebnisse.filter(e => e.test_id === a.p_test).map(e => ({ ...e, spitzname: db.profile.find(p => p.id === e.user_id)?.spitzname })), error: null };
+          if (fn === 'pin_zuruecksetzen') { const p = db.profile.find(x => x.id === a.p_user); const k = db.klassen.find(x => x.id === p.klasse_id); const pin = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); users.find(u => u.id === a.p_user).password = `rcc-${pin}-${k.code}`; save(); return { data: pin, error: null }; }
           return { data: null, error: null };
         },
         auth: {
