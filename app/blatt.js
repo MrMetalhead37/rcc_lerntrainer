@@ -56,7 +56,7 @@
     <p class="klein">Mit dem QR-Code ist der Klassencode schon eingetragen. Am PC: Adresse eingeben, dann den Klassencode.</p></div></div>
   <ol class="schritte">
     <li><span class="hex">1</span><div><b>QR-Code scannen</b><p>Mit der Handykamera scannen und den Link öffnen. Am PC die Adresse oben eingeben und den Klassencode eintippen.</p></div></li>
-    <li><span class="hex">2</span><div><b>Einmalig registrieren</b><p>Vor- und Nachnamen eingeben und eine 4-stellige PIN wählen. Dann auf <b style="display:inline;font-size:inherit">„Neu registrieren“</b> tippen.</p></div></li>
+    <li><span class="hex">2</span><div><b>Einmalig registrieren</b><p>Namen eingeben – am besten Vor- und Nachname, damit deine Lehrkraft dich zuordnen kann – und eine 4-stellige PIN wählen. Dann auf <b style="display:inline;font-size:inherit">„Neu registrieren“</b> tippen.</p></div></li>
     <li><span class="hex">3</span><div><b>Später: einfach anmelden</b><p>Name und PIN eingeben, „Anmelden“ – fertig. Tipp: Im Browser-Menü „Zum Startbildschirm hinzufügen“, dann liegt der Lerntrainer wie eine App auf dem Handy.</p></div></li>
     <li><span class="hex">4</span><div><b>Lernen</b><p>Bereich antippen und loslegen. Die Lernkartei holt Fragen, die noch nicht sitzen, öfter nach vorn. Unter „Prüfung“ simulierst du eine echte Prüfung, unter „Tests“ findest du die Tests deiner Lehrkraft.</p></div></li>
   </ol>

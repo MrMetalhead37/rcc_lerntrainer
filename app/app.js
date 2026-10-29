@@ -74,10 +74,10 @@ function loginView(tab = store.get('logintab', 'schueler')) {
     ${tab === 'schueler' ? `
       ${store.get('lastcode', '') ? `<div class="klassefix" id="klassefix"><span>Klasse</span><b id="kname">${esc(store.get('lastcode', ''))}</b><button type="button" class="linkbtn" id="kaendern">ändern</button></div>` : ''}
       <label class="feld" id="codefeld"${store.get('lastcode', '') ? ' hidden' : ''}>Klassencode<input id="code" autocomplete="off" autocapitalize="characters" placeholder="z. B. ZDS-7KQ2M" value="${esc(store.get('lastcode', ''))}"></label>
-      <label class="feld">Vor- und Nachname<input id="nick" autocomplete="name" autocapitalize="words" maxlength="40" placeholder="z. B. Max Mustermann" value="${esc(store.get('lastnick', ''))}"></label>
+      <label class="feld">Name<input id="nick" autocomplete="name" autocapitalize="words" maxlength="40" placeholder="am besten Vor- und Nachname" value="${esc(store.get('lastnick', ''))}"></label>
       <label class="feld">PIN (4 Ziffern)<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password"></label>
       <div class="actions" style="margin:0"><button class="btn" id="anmelden">Anmelden</button><button class="btn sek" id="neu">Neu registrieren</button></div>
-      <p class="hint">Name und PIN sind dein Zugang – PIN gut merken. Deine Lehrkraft sieht deinen Namen und deinen Lernfortschritt. PIN vergessen? Die Lehrkraft kann sie zurücksetzen.</p>`
+      <p class="hint">Name und PIN sind dein Zugang – PIN gut merken. Mit Vor- und Nachnamen weiß deine Lehrkraft, wer du bist. Sie sieht deinen Namen und deinen Lernfortschritt. PIN vergessen? Die Lehrkraft kann sie zurücksetzen.</p>`
       : `
       <label class="feld">E-Mail<input id="mail" type="email" autocomplete="username"></label>
       <label class="feld">Passwort<input id="pw" type="password" autocomplete="current-password"></label>
@@ -94,8 +94,7 @@ function loginView(tab = store.get('logintab', 'schueler')) {
     const werte = (neu = false) => {
       const code = $('#code').value, nick = $('#nick').value.trim().replace(/\s+/g, ' '), pin = $('#pin').value.trim();
       if (!code.trim()) return err('Bitte Klassencode eingeben.');
-      if (neu && !/^[\p{L}][\p{L}'.-]*( [\p{L}][\p{L}'.-]*)+$/u.test(nick)) return err('Bitte Vor- und Nachnamen eingeben, z. B. „Max Mustermann“ (nur Buchstaben).');
-      if (!/^[\p{L}0-9 '._-]{3,40}$/u.test(nick)) return err('Bitte deinen Vor- und Nachnamen eingeben.');
+      if (!/^[\p{L}0-9 '._-]{3,40}$/u.test(nick)) return err('Name: 3–40 Zeichen, Buchstaben, Ziffern, Leerzeichen oder Bindestrich.');
       if (!/^\d{4}$/.test(pin)) return err('Die PIN hat genau 4 Ziffern.');
       store.set('lastcode', normCode(code)); store.set('lastnick', nick);
       return { nick, ...schuelerZugang(code, nick, pin) };
