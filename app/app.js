@@ -51,8 +51,13 @@ const geprueft = q => q.status === 'geprueft';
 const auswahl = () => S.fragen.filter(q => (S.sel.size === 0 || S.sel.has(q.bereich + '|' + q.thema)) && (!S.nurGeprueft || geprueft(q)));
 
 /* ---------------- Anmeldung ---------------- */
+// Klassencode tolerant einlesen: Kleinschreibung, Leerzeichen, fehlender Bindestrich (zdszpjtd → ZDS-ZPJTD)
+const normCode = c => { c = String(c || '').toUpperCase().replace(/[\s_]/g, ''); if (!c.includes('-') && /^[A-Z]{3}[A-Z0-9]{5}$/.test(c)) c = c.slice(0, 3) + '-' + c.slice(3); return c; };
+const einladeLink = code => location.origin + location.pathname + '?k=' + encodeURIComponent(code);
+// Einladungslink ?k=CODE: Code merken, Adresse bereinigen
+(() => { try { const k = new URLSearchParams(location.search).get('k'); if (k) { store.set('lastcode', normCode(k)); store.set('logintab', 'schueler'); history.replaceState(null, '', location.pathname + location.hash); } } catch { } })();
 function schuelerZugang(code, nick, pin) {
-  code = code.trim().toUpperCase();
+  code = normCode(code);
   return { code, email: `${slug(nick)}.${slug(code)}@${SCHUELER_DOMAIN}`, password: `rcc-${pin}-${code}` };
 }
 function loginView(tab = store.get('logintab', 'schueler')) {
@@ -67,7 +72,8 @@ function loginView(tab = store.get('logintab', 'schueler')) {
     <h3>Anmelden</h3>
     <div class="tabs"><button class="btn ${tab === 'schueler' ? '' : 'sek'}" data-t="schueler">Schüler</button><button class="btn ${tab === 'lehrer' ? '' : 'sek'}" data-t="lehrer">Lehrkraft</button></div>
     ${tab === 'schueler' ? `
-      <label class="feld">Klassencode<input id="code" autocomplete="off" autocapitalize="characters" placeholder="z. B. ZDS-7KQ2M" value="${esc(store.get('lastcode', ''))}"></label>
+      ${store.get('lastcode', '') ? `<div class="klassefix" id="klassefix"><span>Klasse</span><b id="kname">${esc(store.get('lastcode', ''))}</b><button type="button" class="linkbtn" id="kaendern">ändern</button></div>` : ''}
+      <label class="feld" id="codefeld"${store.get('lastcode', '') ? ' hidden' : ''}>Klassencode<input id="code" autocomplete="off" autocapitalize="characters" placeholder="z. B. ZDS-7KQ2M" value="${esc(store.get('lastcode', ''))}"></label>
       <label class="feld">Spitzname<input id="nick" autocomplete="username" maxlength="20" placeholder="kein Klarname nötig" value="${esc(store.get('lastnick', ''))}"></label>
       <label class="feld">PIN (4 Ziffern)<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password"></label>
       <div class="actions" style="margin:0"><button class="btn" id="anmelden">Anmelden</button><button class="btn sek" id="neu">Neu registrieren</button></div>
@@ -81,12 +87,16 @@ function loginView(tab = store.get('logintab', 'schueler')) {
   $$('.tabs button').forEach(b => b.onclick = () => { store.set('logintab', b.dataset.t); loginView(b.dataset.t); });
   const err = m => $('#err').textContent = m;
   if (tab === 'schueler') {
+    if ($('#kaendern')) {
+      $('#kaendern').onclick = () => { $('#klassefix').remove(); $('#codefeld').hidden = false; $('#code').focus(); $('#code').select(); };
+      sb.rpc('klasse_pruefen', { p_code: normCode(store.get('lastcode', '')) }).then(({ data }) => { if (data && $('#kname')) $('#kname').textContent = data; });
+    }
     const werte = () => {
       const code = $('#code').value, nick = $('#nick').value.trim(), pin = $('#pin').value.trim();
       if (!code.trim()) return err('Bitte Klassencode eingeben.');
       if (!/^[\p{L}0-9 _-]{3,20}$/u.test(nick)) return err('Spitzname: 3–20 Zeichen, Buchstaben, Ziffern, Leerzeichen oder Bindestrich.');
       if (!/^\d{4}$/.test(pin)) return err('Die PIN hat genau 4 Ziffern.');
-      store.set('lastcode', code.trim().toUpperCase()); store.set('lastnick', nick);
+      store.set('lastcode', normCode(code)); store.set('lastnick', nick);
       return { nick, ...schuelerZugang(code, nick, pin) };
     };
     $('#anmelden').onclick = async () => {
@@ -343,12 +353,13 @@ async function klassenView() {
   const { data: kl, error } = await sb.from('klassen').select('id,code,name,aktiv,created_at').order('created_at');
   if (error) { v.innerHTML = `<p class="fehlermeldung">${esc(error.message)}</p>`; return; }
   v.innerHTML = `<h3>Klassen</h3><div class="karte" style="max-width:620px"><h2 style="margin:0">Neue Klasse</h2><div class="actions" style="margin:0"><label class="feld" style="flex:1">Name<input id="kname" placeholder="z. B. ZDS Fachschule 2026/27"></label><button class="btn" id="kneu" style="align-self:flex-end">Anlegen</button></div><p class="fehlermeldung" id="kerr"></p></div>
-  <div class="karten" style="margin-top:16px">${(kl || []).map(k => `<div class="karte"><div class="hint" style="margin:0">Klassencode</div><div class="code">${esc(k.code)}</div><h3 style="margin:0">${esc(k.name)}</h3><div class="actions" style="margin:0"><button class="btn klein" data-k="${k.id}">Fortschritt der Schüler</button></div><div id="kf-${k.id}"></div></div>`).join('') || '<p class="leer">Noch keine Klasse angelegt.</p>'}</div>`;
+  <div class="karten" style="margin-top:16px">${(kl || []).map(k => `<div class="karte"><div class="hint" style="margin:0">Klassencode</div><div class="code">${esc(k.code)}</div><h3 style="margin:0">${esc(k.name)}</h3><div class="hint" style="margin:0">Einladungslink – Klassencode ist darin schon enthalten:</div><div class="einladung"><input readonly value="${esc(einladeLink(k.code))}"><button class="btn klein sek" data-link="${esc(einladeLink(k.code))}">Link kopieren</button></div><div class="actions" style="margin:0"><a class="btn klein" href="blatt.html?k=${encodeURIComponent(k.code)}&n=${encodeURIComponent(k.name)}" target="_blank" rel="noopener">Anleitungsblatt drucken</a><button class="btn klein sek" data-k="${k.id}">Fortschritt der Schüler</button></div><div id="kf-${k.id}"></div></div>`).join('') || '<p class="leer">Noch keine Klasse angelegt.</p>'}</div>`;
   $('#kneu').onclick = async () => {
     const name = $('#kname').value.trim(); if (!name) return $('#kerr').textContent = 'Bitte einen Namen eingeben.';
     const { error } = await sb.from('klassen').insert({ name, code: 'ZDS-' + randCode(5), lehrer_id: S.user.id });
     if (error) return $('#kerr').textContent = 'Nicht angelegt: ' + error.message; klassenView();
   };
+  $$('[data-link]', v).forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.link); b.textContent = 'Kopiert ✓'; } catch { b.previousElementSibling.select(); b.textContent = 'Strg + C'; } setTimeout(() => b.textContent = 'Link kopieren', 2500); });
   $$('[data-k]', v).forEach(b => b.onclick = async () => {
     const box = $('#kf-' + b.dataset.k); box.innerHTML = '<p class="leer">Lädt …</p>';
     const { data, error } = await sb.rpc('klassen_fortschritt', { p_klasse: b.dataset.k });

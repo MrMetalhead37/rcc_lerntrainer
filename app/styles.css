@@ -220,3 +220,9 @@ header{background:#FFFFFF;color:#2B3640;border-bottom:1px solid #E1E5E9}
 .logo-link{display:flex;align-items:center;flex-shrink:0;border-radius:4px;transition:opacity .15s}
 .logo-link:hover{opacity:.8}
 .logo-link:focus-visible{outline:2px solid #D9822B;outline-offset:3px}
+
+/* 0.4: Einladungslink, Klasse vorbelegt */
+.klassefix{display:flex;align-items:baseline;gap:10px;background:#F1F3F5;border-radius:8px;padding:10px 12px;margin-bottom:12px}
+.klassefix span{font-size:13px;color:#5F6B75}.klassefix b{color:#004D7A;flex:1}
+.linkbtn{background:none;border:0;color:#004D7A;text-decoration:underline;cursor:pointer;font:inherit;font-size:14px;padding:0}
+.einladung{display:flex;gap:8px}.einladung input{flex:1;min-width:0;font-size:13px;padding:6px 8px;border:1px solid #E1E5E9;border-radius:6px;color:#2B3640;background:#fff}
