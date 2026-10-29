@@ -215,3 +215,8 @@ header{background:#FFFFFF;color:#2B3640;border-bottom:1px solid #E1E5E9}
 .bhex img{width:55%;height:auto}
 .vicon{width:26px;height:26px;flex:none}
 @media (max-width:780px){.marke img.kachel{height:36px}.marke h1{font-size:19px;padding-left:10px}}
+
+/* 0.3.1: Logo verlinkt auf rcc-online.com */
+.logo-link{display:flex;align-items:center;flex-shrink:0;border-radius:4px;transition:opacity .15s}
+.logo-link:hover{opacity:.8}
+.logo-link:focus-visible{outline:2px solid #D9822B;outline-offset:3px}
