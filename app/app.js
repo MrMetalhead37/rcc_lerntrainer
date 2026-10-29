@@ -61,7 +61,7 @@ function loginView(tab = store.get('logintab', 'schueler')) {
   $('#view').innerHTML = `<div class="login-wrap"><div class="login-marke">
     <p class="eyebrow">RCC Lerntrainer</p>
     <h2 class="hero-titel">Süßwarentechnologie üben – Frage für Frage.</h2>
-    <ul class="vorteile"><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">über 500 geprüfte Prüfungsfragen</li><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">Lernkartei: Schwächen kommen zuerst</li><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">Prüfungssimulation und Tests der Lehrkraft</li></ul>
+    <ul class="vorteile"><li><img class="vicon" src="icons/lu_check_aktiv.svg" alt="">über 500 geprüfte Prüfungsfragen</li><li><img class="vicon" src="icons/lu_check_aktiv.svg" alt="">Lernkartei: Schwächen kommen zuerst</li><li><img class="vicon" src="icons/lu_check_aktiv.svg" alt="">Prüfungssimulation und Tests der Lehrkraft</li></ul>
     <p class="klein">Bereitgestellt von RCC Consulting GmbH – technische Beratung für die Süßwarenindustrie.</p>
   </div><div class="login">
     <h3>Anmelden</h3>
@@ -115,9 +115,9 @@ function loginView(tab = store.get('logintab', 'schueler')) {
 
 /* ---------------- Rahmen ---------------- */
 function rolle() { return S.profil?.rolle || 'schueler'; }
-const ICON = { start: 'ziel', lernen: 'lernen', pruefung: 'warten_zeit', tests: 'check', fortschritt: 'trend', klassen: 'team', testbau: 'hinzufuegen', fragen: 'frage' };
-const BICON = { Rohstoffe: 'rohwaren', Schokolade: 'schokolade', Konfekt: 'suess', Zuckerwaren: 'hardcandy', Dauerbackwaren: 'suessgebaeck', Recht: 'paragraph', Allgemein: 'qualitaetssicherung' };
-const icon = (k, v = 'navy') => ICON[k] ? `<img src="icons/ic_${ICON[k]}_${v}.svg" alt="" aria-hidden="true">` : '';
+const ICON = { start: 'target', lernen: 'book-open', pruefung: 'hourglass', tests: 'circle-check', fortschritt: 'trending-up', klassen: 'users', testbau: 'circle-plus', fragen: 'circle-help' };
+const BICON = { Rohstoffe: 'wheat', Schokolade: 'bean', Konfekt: 'candy', Zuckerwaren: 'lollipop', Dauerbackwaren: 'cookie', Recht: 'scale', Allgemein: 'shield-check' };
+const icon = (k, v = 'navy') => ICON[k] ? `<img src="icons/lu_${ICON[k]}_${v}.svg" alt="" aria-hidden="true">` : '';
 function views() {
   const v = [['start', 'Start'], ['lernen', 'Lernen'], ['pruefung', 'Prüfung'], ['tests', 'Tests'], ['fortschritt', 'Fortschritt']];
   if (rolle() === 'lehrer' || rolle() === 'admin') v.push(['klassen', 'Klassen'], ['testbau', 'Tests erstellen']);
@@ -196,7 +196,7 @@ async function startView() {
       <div class="hero-ring" aria-label="${Math.round(tot.beh / Math.max(1, tot.n) * 100)} Prozent sicher">${ring(tot.beh / Math.max(1, tot.n))}<span><b>${Math.round(tot.beh / Math.max(1, tot.n) * 100)}%</b>sicher</span></div></div>
     <div id="testhinweis"></div>
     <h2 class="abschnitt">Deine Bereiche</h2>
-    <div class="bereiche">${Object.entries(g).sort((a, b) => bord(a[0]) - bord(b[0])).map(([b, x]) => `<button class="bkarte" data-b="${esc(b)}"><span class="hex bhex">${BICON[b] ? `<img src="icons/ic_${BICON[b]}_weiss.svg" alt="">` : esc(b[0])}</span><span class="bname">${esc(b)}</span><span class="bzahl">${x.beh} / ${x.n} sicher · ${Math.round(x.beh / x.n * 100)} %</span><span class="mbar"><i style="width:${x.beh / x.n * 100}%;background:var(--ok)"></i><i style="width:${(x.bea - x.beh) / x.n * 100}%;background:var(--navy)"></i></span></button>`).join('')}</div>
+    <div class="bereiche">${Object.entries(g).sort((a, b) => bord(a[0]) - bord(b[0])).map(([b, x]) => `<button class="bkarte" data-b="${esc(b)}"><span class="hex bhex">${BICON[b] ? `<img src="icons/lu_${BICON[b]}_weiss.svg" alt="">` : esc(b[0])}</span><span class="bname">${esc(b)}</span><span class="bzahl">${x.beh} / ${x.n} sicher · ${Math.round(x.beh / x.n * 100)} %</span><span class="mbar"><i style="width:${x.beh / x.n * 100}%;background:var(--ok)"></i><i style="width:${(x.bea - x.beh) / x.n * 100}%;background:var(--navy)"></i></span></button>`).join('')}</div>
   </section>`;
   $$('.bkarte').forEach(b => b.onclick = () => {
     S.sel = new Set(S.fragen.filter(q => q.bereich === b.dataset.b).map(q => q.bereich + '|' + q.thema)); store.set('sel', [...S.sel]); location.hash = 'lernen';
