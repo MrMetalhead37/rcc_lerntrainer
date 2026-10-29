@@ -61,7 +61,7 @@ function loginView(tab = store.get('logintab', 'schueler')) {
   $('#view').innerHTML = `<div class="login-wrap"><div class="login-marke">
     <p class="eyebrow">RCC Lerntrainer</p>
     <h2 class="hero-titel">Süßwarentechnologie üben – Frage für Frage.</h2>
-    <ul class="vorteile"><li><span class="hex mini">✓</span>über 500 geprüfte Prüfungsfragen</li><li><span class="hex mini">✓</span>Lernkartei: Schwächen kommen zuerst</li><li><span class="hex mini">✓</span>Prüfungssimulation und Tests der Lehrkraft</li></ul>
+    <ul class="vorteile"><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">über 500 geprüfte Prüfungsfragen</li><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">Lernkartei: Schwächen kommen zuerst</li><li><img class="vicon" src="icons/ic_check_aktiv.svg" alt="">Prüfungssimulation und Tests der Lehrkraft</li></ul>
     <p class="klein">Bereitgestellt von RCC Consulting GmbH – technische Beratung für die Süßwarenindustrie.</p>
   </div><div class="login">
     <h3>Anmelden</h3>
@@ -115,17 +115,9 @@ function loginView(tab = store.get('logintab', 'schueler')) {
 
 /* ---------------- Rahmen ---------------- */
 function rolle() { return S.profil?.rolle || 'schueler'; }
-const ICON = {
-  start: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
-  lernen: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M8 7h7"/>',
-  pruefung: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/>',
-  tests: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8l1.5 1.5L13 7"/><path d="M9 14h6"/><path d="M9 17h4"/>',
-  fortschritt: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-8"/><path d="M22 20H2"/>',
-  klassen: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5A5 5 0 0 1 21 19"/>',
-  testbau: '<path d="M12 5v14"/><path d="M5 12h14"/>',
-  fragen: '<path d="M9 9a3 3 0 1 1 4 2.8c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="18" r=".6"/><circle cx="12" cy="12" r="10"/>',
-};
-const icon = k => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k] || ''}</svg>`;
+const ICON = { start: 'ziel', lernen: 'lernen', pruefung: 'warten_zeit', tests: 'check', fortschritt: 'trend', klassen: 'team', testbau: 'hinzufuegen', fragen: 'frage' };
+const BICON = { Rohstoffe: 'rohwaren', Schokolade: 'schokolade', Konfekt: 'suess', Zuckerwaren: 'hardcandy', Dauerbackwaren: 'suessgebaeck', Recht: 'paragraph', Allgemein: 'qualitaetssicherung' };
+const icon = (k, v = 'navy') => ICON[k] ? `<img src="icons/ic_${ICON[k]}_${v}.svg" alt="" aria-hidden="true">` : '';
 function views() {
   const v = [['start', 'Start'], ['lernen', 'Lernen'], ['pruefung', 'Prüfung'], ['tests', 'Tests'], ['fortschritt', 'Fortschritt']];
   if (rolle() === 'lehrer' || rolle() === 'admin') v.push(['klassen', 'Klassen'], ['testbau', 'Tests erstellen']);
@@ -133,7 +125,7 @@ function views() {
   return v;
 }
 function setNav(v) {
-  $('#nav').innerHTML = v.map(([k, t]) => `<a href="#${k}" data-v="${k}">${t}</a>`).join('');
+  $('#nav').innerHTML = v.map(([k, t]) => `<a href="#${k}" data-v="${k}">${icon(k)}<span>${t}</span></a>`).join('');
   const b = v.filter(([k]) => ['start', 'lernen', 'pruefung', 'tests', 'fortschritt'].includes(k));
   $('#bnav').innerHTML = b.map(([k, t]) => `<a href="#${k}" data-v="${k}">${icon(k)}<span>${t}</span></a>`).join('');
   $('#bnav').hidden = !v.length; document.body.classList.toggle('mit-bnav', !!v.length);
@@ -194,7 +186,7 @@ async function startView() {
       <div class="hero-ring" aria-label="${Math.round(tot.beh / Math.max(1, tot.n) * 100)} Prozent sicher">${ring(tot.beh / Math.max(1, tot.n))}<span><b>${Math.round(tot.beh / Math.max(1, tot.n) * 100)}%</b>sicher</span></div></div>
     <div id="testhinweis"></div>
     <h2 class="abschnitt">Deine Bereiche</h2>
-    <div class="bereiche">${Object.entries(g).sort((a, b) => bord(a[0]) - bord(b[0])).map(([b, x]) => `<button class="bkarte" data-b="${esc(b)}"><span class="hex bhex">${Math.round(x.beh / x.n * 100)}%</span><span class="bname">${esc(b)}</span><span class="bzahl">${x.beh} / ${x.n} sicher</span><span class="mbar"><i style="width:${x.beh / x.n * 100}%;background:var(--ok)"></i><i style="width:${(x.bea - x.beh) / x.n * 100}%;background:var(--navy)"></i></span></button>`).join('')}</div>
+    <div class="bereiche">${Object.entries(g).sort((a, b) => bord(a[0]) - bord(b[0])).map(([b, x]) => `<button class="bkarte" data-b="${esc(b)}"><span class="hex bhex">${BICON[b] ? `<img src="icons/ic_${BICON[b]}_weiss.svg" alt="">` : esc(b[0])}</span><span class="bname">${esc(b)}</span><span class="bzahl">${x.beh} / ${x.n} sicher · ${Math.round(x.beh / x.n * 100)} %</span><span class="mbar"><i style="width:${x.beh / x.n * 100}%;background:var(--ok)"></i><i style="width:${(x.bea - x.beh) / x.n * 100}%;background:var(--navy)"></i></span></button>`).join('')}</div>
   </section>`;
   $$('.bkarte').forEach(b => b.onclick = () => {
     S.sel = new Set(S.fragen.filter(q => q.bereich === b.dataset.b).map(q => q.bereich + '|' + q.thema)); store.set('sel', [...S.sel]); location.hash = 'lernen';

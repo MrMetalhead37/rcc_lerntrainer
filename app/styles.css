@@ -196,3 +196,22 @@ body{background:var(--seite,#F1F3F5)}
 }
 
 @media (max-width:780px){.hero-ring{display:none}.hero{padding:20px}.hero .actions .btn{flex:1;text-align:center}}
+
+/* ===== Design 0.3: weißer Kopf (Logo nur auf Weiß), Icons aus der RCC-Bibliothek ===== */
+header{background:#FFFFFF;color:#2B3640;border-bottom:1px solid #E1E5E9}
+.marke img.kachel{background:none;padding:0;border-radius:0;height:44px}
+.marke h1{color:#004D7A;border-left:1px solid #E1E5E9;padding-left:14px}
+.marke small{color:#5F6B75;opacity:1}
+.wer{color:#5F6B75}
+.wer button{color:#004D7A}
+#nav{gap:6px}
+#nav a{color:#5F6B75;opacity:1;border-radius:0;padding:8px 4px 10px;margin-right:14px;display:inline-flex;align-items:center;gap:7px;border-bottom:3px solid transparent}
+#nav a img{width:20px;height:20px;opacity:.75}
+#nav a[aria-current="page"]{background:none;color:#004D7A;border-bottom-color:#D9822B}
+#nav a[aria-current="page"] img{opacity:1}
+.bnav a img{width:24px;height:24px;opacity:.55}
+.bnav a[aria-current="page"] img{opacity:1}
+.bnav a[aria-current="page"]{color:#004D7A}
+.bhex img{width:55%;height:auto}
+.vicon{width:26px;height:26px;flex:none}
+@media (max-width:780px){.marke img.kachel{height:36px}.marke h1{font-size:19px;padding-left:10px}}
