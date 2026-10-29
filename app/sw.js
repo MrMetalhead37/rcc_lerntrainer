@@ -1,5 +1,5 @@
 // Offline-Fähigkeit: App-Hülle zwischenspeichern; Datenbankzugriffe gehen immer ins Netz.
-const CACHE = 'rcc-lerntrainer-v0.3.1';
+const CACHE = 'rcc-lerntrainer-v0.3.2';
 const HUELLE = ['./', 'index.html', 'styles.css', 'app.js', 'config.js', 'vendor-supabase.js', 'manifest.webmanifest', 'datenschutz.html',
   'assets/logo-rcc.svg', 'assets/bildmarke.svg', 'assets/icon-256.png',
   'fonts/BarlowSemiCondensed-SemiBold.woff2', 'fonts/BarlowSemiCondensed-Bold.woff2', 'fonts/Nunito-VariableFont_wght.woff2'];

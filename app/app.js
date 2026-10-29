@@ -132,7 +132,17 @@ function setNav(v) {
 }
 function wer() {
   $('#wer').innerHTML = `<span>${esc(S.profil?.spitzname || '')}${S.klasse ? ' · ' + esc(S.klasse.name) : ''}${rolle() !== 'schueler' ? ' · ' + (rolle() === 'admin' ? 'Betreiber' : 'Lehrkraft') : ''}</span><button id="abmelden">Abmelden</button>`;
-  $('#abmelden').onclick = async () => { await sb.auth.signOut(); store.set('fragen', null); store.set('lern', {}); location.hash = ''; };
+  $('#abmelden').onclick = async e => {
+    // Abmelden muss immer klappen – auch wenn der Server nicht antwortet oder einen Fehler meldet.
+    e.currentTarget.disabled = true; e.currentTarget.textContent = 'Abmelden …';
+    try {
+      const r = await Promise.race([sb.auth.signOut({ scope: 'local' }), new Promise(ok => setTimeout(() => ok({ error: 'Zeitüberschreitung' }), 3000))]);
+      if (r?.error) console.warn('Abmelden (Server):', r.error);
+    } catch (x) { console.warn('Abmelden:', x); }
+    try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch { }
+    store.set('fragen', null); store.set('lern', {});
+    location.hash = ''; location.reload();
+  };
 }
 function themenSpalte(onChange, mitFilter = true) {
   const g = {}; S.fragen.filter(q => !S.nurGeprueft || geprueft(q)).forEach(q => { (g[q.bereich] ??= {}); g[q.bereich][q.thema] = (g[q.bereich][q.thema] || 0) + 1; });
