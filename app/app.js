@@ -58,7 +58,12 @@ function schuelerZugang(code, nick, pin) {
 function loginView(tab = store.get('logintab', 'schueler')) {
   setNav([]);
   $('#wer').innerHTML = '';
-  $('#view').innerHTML = `<div class="login">
+  $('#view').innerHTML = `<div class="login-wrap"><div class="login-marke">
+    <p class="eyebrow">RCC Lerntrainer</p>
+    <h2 class="hero-titel">Süßwarentechnologie üben – Frage für Frage.</h2>
+    <ul class="vorteile"><li><span class="hex mini">✓</span>über 500 geprüfte Prüfungsfragen</li><li><span class="hex mini">✓</span>Lernkartei: Schwächen kommen zuerst</li><li><span class="hex mini">✓</span>Prüfungssimulation und Tests der Lehrkraft</li></ul>
+    <p class="klein">Bereitgestellt von RCC Consulting GmbH – technische Beratung für die Süßwarenindustrie.</p>
+  </div><div class="login">
     <h3>Anmelden</h3>
     <div class="tabs"><button class="btn ${tab === 'schueler' ? '' : 'sek'}" data-t="schueler">Schüler</button><button class="btn ${tab === 'lehrer' ? '' : 'sek'}" data-t="lehrer">Lehrkraft</button></div>
     ${tab === 'schueler' ? `
@@ -72,7 +77,7 @@ function loginView(tab = store.get('logintab', 'schueler')) {
       <label class="feld">Passwort<input id="pw" type="password" autocomplete="current-password"></label>
       <div class="actions" style="margin:0"><button class="btn" id="lanmelden">Anmelden</button></div>
       <p class="hint">Zugänge für Lehrkräfte vergibt RCC Consulting.</p>`}
-    <p class="fehlermeldung" id="err" role="alert"></p></div>`;
+    <p class="fehlermeldung" id="err" role="alert"></p></div></div>`;
   $$('.tabs button').forEach(b => b.onclick = () => { store.set('logintab', b.dataset.t); loginView(b.dataset.t); });
   const err = m => $('#err').textContent = m;
   if (tab === 'schueler') {
@@ -110,20 +115,36 @@ function loginView(tab = store.get('logintab', 'schueler')) {
 
 /* ---------------- Rahmen ---------------- */
 function rolle() { return S.profil?.rolle || 'schueler'; }
+const ICON = {
+  start: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  lernen: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M8 7h7"/>',
+  pruefung: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/>',
+  tests: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8l1.5 1.5L13 7"/><path d="M9 14h6"/><path d="M9 17h4"/>',
+  fortschritt: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-8"/><path d="M22 20H2"/>',
+  klassen: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5A5 5 0 0 1 21 19"/>',
+  testbau: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  fragen: '<path d="M9 9a3 3 0 1 1 4 2.8c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="18" r=".6"/><circle cx="12" cy="12" r="10"/>',
+};
+const icon = k => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k] || ''}</svg>`;
 function views() {
-  const v = [['lernen', 'Lernen'], ['pruefung', 'Prüfungssimulation'], ['tests', 'Tests'], ['fortschritt', 'Fortschritt']];
+  const v = [['start', 'Start'], ['lernen', 'Lernen'], ['pruefung', 'Prüfung'], ['tests', 'Tests'], ['fortschritt', 'Fortschritt']];
   if (rolle() === 'lehrer' || rolle() === 'admin') v.push(['klassen', 'Klassen'], ['testbau', 'Tests erstellen']);
   if (rolle() === 'admin') v.push(['fragen', 'Fragen prüfen']);
   return v;
 }
-function setNav(v) { $('#nav').innerHTML = v.map(([k, t]) => `<a href="#${k}" data-v="${k}">${t}</a>`).join(''); }
+function setNav(v) {
+  $('#nav').innerHTML = v.map(([k, t]) => `<a href="#${k}" data-v="${k}">${t}</a>`).join('');
+  const b = v.filter(([k]) => ['start', 'lernen', 'pruefung', 'tests', 'fortschritt'].includes(k));
+  $('#bnav').innerHTML = b.map(([k, t]) => `<a href="#${k}" data-v="${k}">${icon(k)}<span>${t}</span></a>`).join('');
+  $('#bnav').hidden = !v.length; document.body.classList.toggle('mit-bnav', !!v.length);
+}
 function wer() {
   $('#wer').innerHTML = `<span>${esc(S.profil?.spitzname || '')}${S.klasse ? ' · ' + esc(S.klasse.name) : ''}${rolle() !== 'schueler' ? ' · ' + (rolle() === 'admin' ? 'Betreiber' : 'Lehrkraft') : ''}</span><button id="abmelden">Abmelden</button>`;
   $('#abmelden').onclick = async () => { await sb.auth.signOut(); store.set('fragen', null); store.set('lern', {}); location.hash = ''; };
 }
 function themenSpalte(onChange, mitFilter = true) {
   const g = {}; S.fragen.filter(q => !S.nurGeprueft || geprueft(q)).forEach(q => { (g[q.bereich] ??= {}); g[q.bereich][q.thema] = (g[q.bereich][q.thema] || 0) + 1; });
-  const el = document.createElement('aside'); el.innerHTML = '<h2>Themen</h2>';
+  const el = document.createElement('div'); el.className = 'themen-inhalt';
   Object.keys(g).sort((a, b) => bord(a) - bord(b)).forEach(b => {
     const ts = Object.keys(g[b]).sort(), all = ts.every(t => S.sel.has(b + '|' + t)), sum = ts.reduce((a, t) => a + g[b][t], 0);
     const d = document.createElement('div'); d.className = 'bereich';
@@ -138,19 +159,57 @@ function themenSpalte(onChange, mitFilter = true) {
     el.append(d);
   });
   const e = document.createElement('div'); e.className = 'einst';
-  e.innerHTML = `${mitFilter && rolle() !== 'schueler' ? `<label class="zeile"><input type="checkbox" id="nurg" ${S.nurGeprueft ? 'checked' : ''}> Nur geprüfte Lösungen</label>` : ''}<span>${S.sel.size ? S.sel.size + ' Themen gewählt' : 'Kein Thema gewählt = alle Themen'}</span>${S.sel.size ? '<button class="chip" id="alleab" type="button">Auswahl aufheben</button>' : ''}`;
+  e.innerHTML = `${location.hash === '#lernen' || location.hash === '' ? `<label class="zeile">Fragen je Runde <select id="anz">${[5, 10, 20, 30].map(x => `<option ${x == store.get('anz', 10) ? 'selected' : ''}>${x}</option>`).join('')}</select></label>` : ''}${mitFilter && rolle() !== 'schueler' ? `<label class="zeile"><input type="checkbox" id="nurg" ${S.nurGeprueft ? 'checked' : ''}> Nur geprüfte Lösungen</label>` : ''}<span>${S.sel.size ? S.sel.size + ' Themen gewählt' : 'Kein Thema gewählt = alle Themen'}</span>${S.sel.size ? '<button class="chip" id="alleab" type="button">Auswahl aufheben</button>' : ''}`;
   el.append(e);
   if ($('#nurg', el)) $('#nurg', el).onchange = ev => { S.nurGeprueft = ev.target.checked; store.set('nurGeprueft', S.nurGeprueft); onChange(); };
   if ($('#alleab', el)) $('#alleab', el).onclick = () => { S.sel.clear(); store.set('sel', []); onChange(); };
   return el;
 }
+function themenText() { return S.sel.size ? `${S.sel.size} ${S.sel.size === 1 ? 'Thema' : 'Themen'} gewählt` : 'alle Themen'; }
 function rahmen(onChange) {
   const v = $('#view'); v.innerHTML = '';
-  const g = document.createElement('div'); g.className = 'grid'; g.append(themenSpalte(onChange));
+  const g = document.createElement('div'); g.className = 'grid';
+  const a = document.createElement('aside'); a.className = 'themen';
+  const d = document.createElement('details'); d.open = matchMedia('(min-width: 781px)').matches || store.get('themenOffen', false);
+  d.innerHTML = `<summary><span>Themen</span><span class="wahl">${themenText()}</span></summary>`;
+  d.ontoggle = () => { if (!matchMedia('(min-width: 781px)').matches) store.set('themenOffen', d.open); };
+  d.append(themenSpalte(onChange)); a.append(d); g.append(a);
   const p = document.createElement('section'); p.className = 'panel'; p.setAttribute('aria-live', 'polite'); g.append(p); v.append(g); return p;
 }
 const optionenHtml = (q, cls) => `<div class="optlist">${q.optionen.map((o, i) => `<button class="opt ${cls ? cls(L[i]) : ''}" data-l="${L[i]}"><span class="hex">${L[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>`;
 const fehlerListe = f => f.length ? `<h2>Falsch beantwortet</h2><div class="liste">${f.map(x => `<div><span class="f">${esc(clean(x.q.frage))}</span><br>Deine Antwort: ${x.l || '–'} · Richtig: ${x.q.loesung} · ${esc(x.q.optionen[L.indexOf(x.q.loesung)])}</div>`).join('')}</div>` : '';
+
+/* ---------------- Start ---------------- */
+async function startView() {
+  const fs = S.fragen.filter(geprueft), g = {};
+  fs.forEach(q => { (g[q.bereich] ??= { n: 0, bea: 0, beh: 0 }); g[q.bereich].n++; const s = S.lern[q.id]; if (s) { g[q.bereich].bea++; if (s.fach >= 3) g[q.bereich].beh++; } });
+  const tot = Object.values(g).reduce((a, x) => ({ n: a.n + x.n, bea: a.bea + x.bea, beh: a.beh + x.beh }), { n: 0, bea: 0, beh: 0 });
+  const faellig = fs.filter(q => (S.lern[q.id]?.fach ?? 0) < 3).length;
+  const name = S.profil?.spitzname || '';
+  const h = new Date().getHours(), gruss = h < 11 ? 'Guten Morgen' : h < 18 ? 'Hallo' : 'Guten Abend';
+  $('#view').innerHTML = `<section class="start">
+    <div class="hero"><div><p class="eyebrow">${gruss}${name ? ', ' + esc(name) : ''}</p><h2 class="hero-titel">${tot.bea ? 'Weiter, wo du aufgehört hast.' : 'Bereit für die erste Runde?'}</h2>
+      <p class="hero-text">${tot.beh} von ${tot.n} Fragen sitzen sicher. ${faellig} Fragen warten auf Wiederholung.</p>
+      <div class="actions"><a class="btn gross" href="#lernen">${tot.bea ? 'Weiterlernen' : 'Jetzt starten'}</a><a class="btn sek gross hell" href="#pruefung">Prüfung simulieren</a></div></div>
+      <div class="hero-ring" aria-label="${Math.round(tot.beh / Math.max(1, tot.n) * 100)} Prozent sicher">${ring(tot.beh / Math.max(1, tot.n))}<span><b>${Math.round(tot.beh / Math.max(1, tot.n) * 100)}%</b>sicher</span></div></div>
+    <div id="testhinweis"></div>
+    <h2 class="abschnitt">Deine Bereiche</h2>
+    <div class="bereiche">${Object.entries(g).sort((a, b) => bord(a[0]) - bord(b[0])).map(([b, x]) => `<button class="bkarte" data-b="${esc(b)}"><span class="hex bhex">${Math.round(x.beh / x.n * 100)}%</span><span class="bname">${esc(b)}</span><span class="bzahl">${x.beh} / ${x.n} sicher</span><span class="mbar"><i style="width:${x.beh / x.n * 100}%;background:var(--ok)"></i><i style="width:${(x.bea - x.beh) / x.n * 100}%;background:var(--navy)"></i></span></button>`).join('')}</div>
+  </section>`;
+  $$('.bkarte').forEach(b => b.onclick = () => {
+    S.sel = new Set(S.fragen.filter(q => q.bereich === b.dataset.b).map(q => q.bereich + '|' + q.thema)); store.set('sel', [...S.sel]); location.hash = 'lernen';
+  });
+  if (S.profil?.klasse_id) {
+    const { data: tests } = await sb.from('tests').select('id,titel,klasse_id').eq('aktiv', true);
+    const { data: erg } = await sb.from('test_ergebnisse').select('test_id');
+    const offen = (tests || []).filter(t => t.klasse_id === S.profil.klasse_id && !(erg || []).some(e => e.test_id === t.id));
+    if (offen.length && $('#testhinweis')) $('#testhinweis').innerHTML = `<a class="testband" href="#tests"><span class="hex thex">!</span><span><b>${offen.length === 1 ? 'Ein neuer Test' : offen.length + ' neue Tests'}</b> von deiner Lehrkraft: ${esc(offen[0].titel)}${offen.length > 1 ? ' …' : ''}</span><span class="pfeil">›</span></a>`;
+  }
+}
+function ring(anteil) {
+  const r = 52, u = 2 * Math.PI * r, d = Math.max(0, Math.min(1, anteil)) * u;
+  return `<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="10"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="#D9822B" stroke-width="10" stroke-linecap="round" stroke-dasharray="${d} ${u}" transform="rotate(-90 60 60)"/></svg>`;
+}
 
 /* ---------------- Lernen ---------------- */
 let runde = null;
@@ -164,15 +223,16 @@ function lernenRender() {
   if (!r.qs.length) { p.innerHTML = '<h2>Keine Fragen</h2><p class="leer">Für diese Auswahl gibt es keine Fragen. Bitte andere Themen wählen.</p>'; return; }
   if (r.k >= r.qs.length) return lernenEnde(p);
   const q = r.qs[r.k], fach = S.lern[q.id]?.fach ?? 0;
-  p.innerHTML = `<div class="meta"><span>Frage ${r.k + 1} von ${r.qs.length} · Fach ${fach} von 5</span><span>${r.ok} richtig · je Runde <select id="anz" aria-label="Fragen je Runde">${[5, 10, 20, 30].map(x => `<option ${x == store.get('anz', 10) ? 'selected' : ''}>${x}</option>`).join('')}</select></span></div><div class="bar"><i style="width:${r.k / r.qs.length * 100}%"></i></div>
-  <div class="thema">${esc(q.bereich)} · ${esc(q.thema)}</div><div class="frage">${esc(clean(q.frage))}</div><p class="hint">${hinweis(q.frage)}</p>${optionenHtml(q)}<div id="fb"></div>`;
-  $('#anz', p).onchange = e => { store.set('anz', +e.target.value); lernenStart(); };
+  p.innerHTML = `<div class="meta"><span>Frage ${r.k + 1} von ${r.qs.length}</span><span>Fach ${fach} von 5 · ${r.ok} richtig</span></div><div class="bar"><i style="width:${r.k / r.qs.length * 100}%"></i></div>
+  <div class="fkarte"><div class="thema">${esc(q.bereich)} · ${esc(q.thema)}</div><div class="frage">${esc(clean(q.frage))}</div><p class="hint">${hinweis(q.frage)}</p>${optionenHtml(q)}<div id="fb"></div></div>`;
+  const anz = $('#anz'); if (anz) anz.onchange = e => { store.set('anz', +e.target.value); lernenStart(); };
   $$('.opt', p).forEach(b => b.onclick = () => {
     const ok = b.dataset.l === q.loesung;
     $$('.opt', p).forEach(x => { x.disabled = true; if (x.dataset.l === q.loesung) x.classList.add('richtig'); else if (x === b) x.classList.add('falsch'); });
     verbuche(q, ok); if (ok) r.ok++; r.log.push({ q, l: b.dataset.l, ok });
-    $('#fb', p).innerHTML = `<div class="box"><strong style="color:var(${ok ? '--ok' : '--fehler'})">${ok ? 'Richtig' : 'Nicht richtig'}</strong> · Lösung ${q.loesung}${geprueft(q) ? '' : ' <span class="tag">Lösung noch in Prüfung</span>'}</div><div class="actions"><button class="btn" id="weiter">${r.k + 1 < r.qs.length ? 'Nächste Frage' : 'Auswertung'}</button></div>`;
-    $('#weiter', p).onclick = () => { r.k++; lernenRender(); }; $('#weiter', p).focus();
+    $('#fb', p).innerHTML = `<div class="rueck ${ok ? 'gut' : 'schlecht'}"><strong>${ok ? 'Richtig!' : 'Leider falsch.'}</strong> <span>${ok ? (fach + 1 >= 3 ? 'Diese Frage sitzt.' : 'Weiter so.') : 'Richtig ist ' + q.loesung + '. Die Frage kommt bald wieder.'}</span>${geprueft(q) ? '' : ' <span class="tag">Lösung noch in Prüfung</span>'}</div><div class="weiter-leiste"><button class="btn gross" id="weiter">${r.k + 1 < r.qs.length ? 'Nächste Frage' : 'Auswertung'}</button></div>`;
+    $('#weiter', p).onclick = () => { r.k++; lernenRender(); window.scrollTo(0, 0); }; $('#weiter', p).focus({ preventScroll: true });
+    $('.rueck', p).scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 }
 function lernenEnde(p) {
@@ -377,14 +437,15 @@ async function importFragen() {
 }
 
 /* ---------------- Routing ---------------- */
-const VIEWS = { lernen: lernenStart, pruefung: pruefungStart, tests: testsView, fortschritt, klassen: klassenView, testbau: testbauView, fragen: fragenView };
+const VIEWS = { start: startView, lernen: lernenStart, pruefung: pruefungStart, tests: testsView, fortschritt, klassen: klassenView, testbau: testbauView, fragen: fragenView };
 function route() {
   if (!S.user) return loginView();
   const erlaubt = views().map(x => x[0]);
-  let v = location.hash.slice(1); if (!erlaubt.includes(v)) v = 'lernen';
+  let v = location.hash.slice(1); if (!erlaubt.includes(v)) v = 'start';
   if (pr && v !== 'pruefung' && v !== 'tests') { clearInterval(uhr); pr = null; }
-  $$('#nav a').forEach(a => a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (!S.fragen.length && v !== 'fragen' && v !== 'klassen') { $('#view').innerHTML = `<p class="leer">Noch keine Fragen in der Datenbank.${rolle() === 'admin' ? ' Unter „Fragen prüfen“ einspielen.' : ''}</p>`; return; }
+  window.scrollTo(0, 0);
+  $$('#nav a, #bnav a').forEach(a => a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  if (!S.fragen.length && !['fragen', 'klassen', 'start'].includes(v)) { $('#view').innerHTML = `<p class="leer">Noch keine Fragen in der Datenbank.${rolle() === 'admin' ? ' Unter „Fragen prüfen“ einspielen.' : ''}</p>`; return; }
   VIEWS[v]();
 }
 async function start(session) {
